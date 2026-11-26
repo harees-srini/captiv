@@ -101,3 +101,17 @@ export const comments = pgTable("comment", {
   body: text("body").notNull(),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });
+
+export const follows = pgTable(
+  "follow",
+  {
+    followerId: text("followerId") // the Captor
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    followingId: text("followingId") // the Captive
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.followerId, t.followingId] })]
+);
