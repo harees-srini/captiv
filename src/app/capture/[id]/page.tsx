@@ -27,8 +27,11 @@ export default async function CapturePage({
       caption: captures.caption,
       createdAt: captures.createdAt,
       username: users.username,
-       authorId: captures.userId,
-      captivationCount: sql<number>`(select count(*) from ${captivations} where ${captivations.captureId} = ${captures.id})`.mapWith(Number),
+      authorId: captures.userId,
+      captivationCount:
+        sql<number>`(select count(*) from ${captivations} where ${captivations.captureId} = ${captures.id})`.mapWith(
+          Number,
+        ),
       captivated: userId
         ? sql<boolean>`exists (select 1 from ${captivations} where ${captivations.captureId} = ${captures.id} and ${captivations.userId} = ${userId})`
         : sql<boolean>`false`,
@@ -55,12 +58,21 @@ export default async function CapturePage({
 
   return (
     <main className="mx-auto flex min-h-screen max-w-xl flex-col gap-6 p-6">
-      <Link href="/" className="text-sm underline">← Back to The Lineup</Link>
+      <Link href="/" className="text-sm underline">
+        ← Back to The Lineup
+      </Link>
 
       <article className="rounded border p-3">
-        <p className="text-sm font-semibold">@{capture.username}</p>
+        <Link
+          href={`/@${capture.username}`}
+          className="text-sm font-semibold hover:underline"
+        >
+          @{capture.username}
+        </Link>
         <p className="mt-1 whitespace-pre-wrap">{capture.caption}</p>
-        <p className="mt-2 text-xs text-gray-500">{capture.createdAt.toLocaleString()}</p>
+        <p className="mt-2 text-xs text-gray-500">
+          {capture.createdAt.toLocaleString()}
+        </p>
         <div className="mt-3">
           <CaptivateButton
             captureId={capture.id}
@@ -69,7 +81,11 @@ export default async function CapturePage({
             signedIn={!!userId}
           />
           {capture.authorId === userId && (
-            <ReleaseButton action={releaseCapture} id={capture.id} what="Capture" />
+            <ReleaseButton
+              action={releaseCapture}
+              id={capture.id}
+              what="Capture"
+            />
           )}
         </div>
       </article>
@@ -78,21 +94,37 @@ export default async function CapturePage({
         <ChatterForm captureId={capture.id} />
       ) : (
         <p className="text-sm">
-          <Link href="/check-in" className="underline">Check In</Link> to join the chatter.
+          <Link href="/check-in" className="underline">
+            Check In
+          </Link>{" "}
+          to join the chatter.
         </p>
       )}
 
       <section className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold">Chatter</h2>
-        {chatter.length === 0 && <p className="text-gray-500">Quiet in here.</p>}
+        {chatter.length === 0 && (
+          <p className="text-gray-500">Quiet in here.</p>
+        )}
         {chatter.map((c) => (
           <div key={c.id} className="rounded border p-3">
-            <p className="text-sm font-semibold">@{c.username}</p>
+            <Link
+              href={`/@${capture.username}`}
+              className="text-sm font-semibold hover:underline"
+            >
+              @{capture.username}
+            </Link>
             <p className="mt-1 whitespace-pre-wrap">{c.body}</p>
-            <p className="mt-2 text-xs text-gray-500">{c.createdAt.toLocaleString()}</p>
+            <p className="mt-2 text-xs text-gray-500">
+              {c.createdAt.toLocaleString()}
+            </p>
             {c.authorId === userId && (
               <div className="mt-2">
-                <ReleaseButton action={releaseChatter} id={c.id} what="Chatter" />
+                <ReleaseButton
+                  action={releaseChatter}
+                  id={c.id}
+                  what="Chatter"
+                />
               </div>
             )}
           </div>
