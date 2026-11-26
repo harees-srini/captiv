@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: captiv
+      POSTGRES_PASSWORD: captiv
+      POSTGRES_DB: captiv
+    ports:
+      - "5544:5432"
+    volumes:
+      - captiv_data:/var/lib/postgresql/data
+
+volumes:
+  captiv_data:
