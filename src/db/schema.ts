@@ -75,3 +75,29 @@ export const captures = pgTable("capture", {
   caption: text("caption").notNull(),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });
+
+export const captivations = pgTable(
+  "captivation",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    captureId: uuid("captureId")
+      .notNull()
+      .references(() => captures.id, { onDelete: "cascade" }),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.captureId] })] // one per user per Capture
+);
+
+export const comments = pgTable("comment", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  captureId: uuid("captureId")
+    .notNull()
+    .references(() => captures.id, { onDelete: "cascade" }),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+});
