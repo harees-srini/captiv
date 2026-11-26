@@ -18,7 +18,7 @@ export default function ReleaseButton({
             e.preventDefault();
           }
         }}
-        className="text-sm text-red-600 underline"
+        className="text-sm font-semibold text-rose-700/80 hover:text-rose-700"
       >
         Release
       </button>

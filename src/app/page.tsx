@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
 import { getCaptures } from "@/lib/captures";
+import SiteHeader from "@/components/SiteHeader";
 import CaptureForm from "@/components/CaptureForm";
 import CaptureCard from "@/components/CaptureCard";
 
@@ -10,42 +10,32 @@ export default async function Home() {
   const lineup = await getCaptures({ viewerId: userId });
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-xl flex-col gap-6 p-6">
-      <header className="flex items-center justify-between">
-        <h1 className="text-4xl font-bold">Captiv</h1>
-        {session?.user ? (
-          <div className="flex items-center gap-2">
-            <Link href={`/@${session.user.name}`} className="rounded border px-3 py-2">
-              My Cell
-            </Link>
-            <form
-              action={async () => {
-                "use server";
-                await signOut({ redirectTo: "/check-in" });
-              }}
-            >
-              <button className="rounded border px-3 py-2">Escape</button>
-            </form>
-          </div>
+    <>
+      <SiteHeader />
+      <main className="mx-auto flex max-w-xl flex-col gap-6 px-5 pb-16">
+        {userId ? (
+          <CaptureForm />
         ) : (
-          <div className="flex gap-2">
-            <Link href="/get-captured" className="rounded bg-black px-3 py-2 text-white">Get Captured</Link>
-            <Link href="/check-in" className="rounded border px-3 py-2">Check In</Link>
-          </div>
+          <section className="neu-raised p-8 text-center">
+            <h1 className="text-3xl font-extrabold text-viola-900">Get captured.</h1>
+            <p className="mt-2 text-viola-700">
+              Post Captures, captivate others, and take captives of your own.
+            </p>
+          </section>
         )}
-      </header>
 
-      {session?.user && <CaptureForm />}
-
-      <section className="flex flex-col gap-3">
-        <h2 className="text-xl font-semibold">The Lineup</h2>
-        {lineup.length === 0 && (
-          <p className="text-gray-500">Nobody&apos;s been captured yet. Be the first.</p>
-        )}
-        {lineup.map((c) => (
-          <CaptureCard key={c.id} capture={c} viewerId={userId} />
-        ))}
-      </section>
-    </main>
+        <section className="flex flex-col gap-5">
+          <h2 className="px-1 text-xl font-extrabold text-viola-900">The Lineup</h2>
+          {lineup.length === 0 && (
+            <p className="neu-pressed p-5 text-center text-viola-700">
+              Nobody&apos;s been captured yet. Be the first.
+            </p>
+          )}
+          {lineup.map((c) => (
+            <CaptureCard key={c.id} capture={c} viewerId={userId} />
+          ))}
+        </section>
+      </main>
+    </>
   );
 }

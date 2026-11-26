@@ -7,6 +7,7 @@ import { users } from "@/db/schema";
 import { getCaptures } from "@/lib/captures";
 import CaptureCard from "@/components/CaptureCard";
 import CaptiveButton from "@/components/CaptiveButton";
+import SiteHeader from "@/components/SiteHeader";
 
 export default async function CellPage({
   params,
@@ -39,39 +40,54 @@ export default async function CellPage({
   const isMe = viewerId === profile.id;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-xl flex-col gap-6 p-6">
-      <Link href="/" className="text-sm underline">← Back to The Lineup</Link>
-
-      <header className="rounded border p-4">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">@{profile.username}</h1>
-            {isMe && <p className="text-sm text-gray-500">This is your Cell.</p>}
+    <>
+      <SiteHeader />
+      <main className="mx-auto flex max-w-xl flex-col gap-6 px-5 pb-16">
+        <section className="neu-raised p-6">
+          <div className="flex items-center gap-4">
+            <div className="neu-pressed flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-2xl font-extrabold text-viola-900">
+              {(profile.username ?? "?")[0].toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="truncate text-2xl font-extrabold text-viola-900">
+                @{profile.username}
+              </h1>
+              {isMe && <p className="text-sm text-viola-700">This is your Cell.</p>}
+            </div>
+            {viewerId && !isMe && (
+              <CaptiveButton userId={profile.id} isCaptive={profile.isCaptive} />
+            )}
+            {!viewerId && (
+              <Link href="/check-in" className="neu-btn text-sm">
+                Check In to take captive
+              </Link>
+            )}
           </div>
-          {viewerId && !isMe && (
-            <CaptiveButton userId={profile.id} isCaptive={profile.isCaptive} />
-          )}
-          {!viewerId && (
-            <Link href="/check-in" className="rounded border px-4 py-2 text-sm">
-              Check In to take captive
-            </Link>
-          )}
-        </div>
-        <p className="mt-3 text-sm">
-          <strong>{profile.captiveCount}</strong> Captives ·{" "}
-          <strong>{profile.captorCount}</strong> Captors
-        </p>
-        <p className="mt-1 text-sm text-gray-500">
-          {profile.captureCount} Captures · {profile.captivationsReceived} Captivations received
-        </p>
-      </header>
 
-      <section className="flex flex-col gap-3">
-        {theirCaptures.length === 0 && <p className="text-gray-500">No Captures yet.</p>}
-        {theirCaptures.map((c) => (
-          <CaptureCard key={c.id} capture={c} viewerId={viewerId} />
-        ))}
-      </section>
-    </main>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { label: "Captives", value: profile.captiveCount },
+              { label: "Captors", value: profile.captorCount },
+              { label: "Captures", value: profile.captureCount },
+              { label: "Captivations", value: profile.captivationsReceived },
+            ].map((s) => (
+              <div key={s.label} className="neu-pressed p-3 text-center">
+                <p className="text-xl font-extrabold text-viola-900">{s.value}</p>
+                <p className="text-xs text-viola-700">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-5">
+          {theirCaptures.length === 0 && (
+            <p className="neu-pressed p-5 text-center text-viola-700">No Captures yet.</p>
+          )}
+          {theirCaptures.map((c) => (
+            <CaptureCard key={c.id} capture={c} viewerId={viewerId} />
+          ))}
+        </section>
+      </main>
+    </>
   );
 }
