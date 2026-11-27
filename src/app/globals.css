@@ -26,6 +26,7 @@ body {
   background: var(--surface);
   color: var(--color-ink);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  text-align: center;
 }
 
 @layer components {
@@ -54,6 +55,7 @@ body {
     width: 100%;
     padding: 0.75rem 1rem;
     color: var(--color-ink);
+    text-align: left;
     transition: box-shadow 0.15s ease;
   }
   .neu-input::placeholder {
